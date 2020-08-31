@@ -1,6 +1,18 @@
 <div>
-  rates:
+    pair: {{(ratesBTC$ | async).pair}}, price: {{(ratesBTC$ | async).price}}, {{(ratesBTC$ | async).entryType }}
 </div>
 <div>
-    {{(rates$ | async).price}}
+    pair: {{(ratesETH$ | async).pair}}, price: {{(ratesETH$ | async).price}}, {{(ratesETH$ | async).entryType }}
 </div>
+<div>
+    pair: {{(ratesLTC$ | async).pair}}, price: {{(ratesLTC$ | async).price}}, {{(ratesLTC$ | async).entryType }}
+</div>
+<!-- <div *ngIf="(ratesBTC$ | async) !== null">
+    pair: {{(ratesBTC$ | async).pair}}, price: {{(ratesBTC$ | async).price}}, {{(ratesBTC$ | async).entryType }}
+</div>
+<div *ngIf="(ratesETH$ | async) !== null">
+    pair: {{(ratesETH$ | async).pair}}, price: {{(ratesETH$ | async).price}}, {{(ratesETH$ | async).entryType }}
+</div>
+<div *ngIf="(ratesLTC$ | async) !== null">
+    pair: {{(ratesLTC$ | async).pair}}, price: {{(ratesLTC$ | async).price}}, {{(ratesLTC$ | async).entryType }}
+</div> -->
