@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { catchError, tap, switchAll } from 'rxjs/operators';
-import { EMPTY, Subject, BehaviorSubject } from 'rxjs';
+import { EMPTY, Subject, BehaviorSubject, Observable } from 'rxjs';
 
-import { bitbayURL, bitfinexURL } from '../constants/markets';
+// import { bitbayURL, bitfinexURL } from '../constants/markets';
 import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
          bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
 
 
 @Injectable({providedIn: 'root'})
 
-export class RatesWSService {
+export class RatesAPIService {
 
   public ratesBTCSubject$ = new Subject();
   public ratesETHSubject$ = new Subject();
   public ratesLTCSubject$ = new Subject();
+
+  constructor(private http: HttpClient) {}
 
   public getRatesWS(market: string, initMsg: string): void {
     const stream = new WebSocket(market);
@@ -35,6 +38,17 @@ export class RatesWSService {
 
     };
   };
+}
+
+public getRatesREST(market: string): Promise<object|any> {
+  return this.http.get(market).toPromise();
+  // try {
+  //   const initTraidingPairs: Promise<any> = this.http.get(market).toPromise() ;
+  //   // console.log('---btcInit: ', btcInit);
+  //   return initTraidingPairs;
+  // } catch (e) {
+  //   console.log('---err: ', e);
+  // }
 }
 
 }

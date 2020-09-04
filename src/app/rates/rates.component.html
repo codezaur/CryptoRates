@@ -1,12 +1,23 @@
-<div>
-    pair: {{(ratesBTC$ | async).pair}}, price: {{(ratesBTC$ | async).price}}, {{(ratesBTC$ | async).entryType }}
+<p>RATES</p>
+<div *ngIf="ratesBTC$">
+  pair: {{ratesBTC$.pair}}, price: {{ratesBTC$.price}}
+</div>
+<div *ngIf="ratesETH$">
+  pair: {{ratesETH$.pair}}, price: {{ratesETH$.price}}
+</div>
+<div *ngIf="ratesLTC$">
+  pair: {{ratesLTC$.pair}}, price: {{ratesLTC$.price}}
+</div>
+
+<!-- <div>
+    pair: {{(ratesBTC$ | async).pair}}, price: {{(ratesBTC$ | async).price}}
 </div>
 <div>
-    pair: {{(ratesETH$ | async).pair}}, price: {{(ratesETH$ | async).price}}, {{(ratesETH$ | async).entryType }}
+    pair: {{(ratesETH$ | async).pair}}, price: {{(ratesETH$ | async).price}}
 </div>
 <div>
-    pair: {{(ratesLTC$ | async).pair}}, price: {{(ratesLTC$ | async).price}}, {{(ratesLTC$ | async).entryType }}
-</div>
+    pair: {{(ratesLTC$ | async).pair}}, price: {{(ratesLTC$ | async).price}}
+</div> -->
 <!-- <div *ngIf="(ratesBTC$ | async) !== null">
     pair: {{(ratesBTC$ | async).pair}}, price: {{(ratesBTC$ | async).price}}, {{(ratesBTC$ | async).entryType }}
 </div>
