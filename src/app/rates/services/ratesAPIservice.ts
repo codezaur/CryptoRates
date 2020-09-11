@@ -16,6 +16,7 @@ export class RatesAPIService {
   public ratesBTCSubject$ = new Subject();
   public ratesETHSubject$ = new Subject();
   public ratesLTCSubject$ = new Subject();
+  public ratesSubject$ = new Subject();
 
   constructor(private http: HttpClient) {}
 
@@ -27,13 +28,14 @@ export class RatesAPIService {
         const data = JSON.parse(m.data);
 
         if (data.topic) {
-          if ((data.topic as string).includes('btc')) {
-            this.ratesBTCSubject$.next(m);
-        } else if ((data.topic as string).includes('eth')) {
-            this.ratesETHSubject$.next(m);
-        } else if ((data.topic as string).includes('ltc')) {
-          this.ratesLTCSubject$.next(m);
-        }
+          this.ratesSubject$.next(m);
+        //   if ((data.topic as string).includes('btc')) {
+        //     this.ratesBTCSubject$.next(m);
+        // } else if ((data.topic as string).includes('eth')) {
+        //     this.ratesETHSubject$.next(m);
+        // } else if ((data.topic as string).includes('ltc')) {
+        //   this.ratesLTCSubject$.next(m);
+        // }
         }
 
     };
