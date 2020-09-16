@@ -15,31 +15,33 @@ import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
 })
 export class RatesComponent implements OnInit {
 
-  allRates$: TradingPair[];
+  allRates: TradingPair[];
 
   rates$: Observable<TradingPair> | TradingPair;
+
+  selectedCurrencies: string[] = [];
 
   constructor(private CD: ChangeDetectorRef, private ratesService: RatesService) {
   }
 
   ngOnInit() {
-    this.getInitalRates();
-    this.listenForUpdates();
+    this.getInitalRates()
+        .then(() => this.listenForUpdates());
   }
 
-  private getInitalRates() {
+  private getInitalRates(): Promise<any> {
 
-    this.ratesService.getInitalRates(RESTbitbayURL)
+    return this.ratesService.getInitalRates(RESTbitbayURL)
                      .then((initialPairs: TradingPair[]) => {
-                           this.allRates$ = initialPairs;
+                           this.allRates = initialPairs;
     });
   }
 
   private listenForUpdates(): void {
 
-    this.ratesService.getRatesUpdates(WSbitbayURL, bitbayBTCQuery)
+    this.ratesService.getRatesUpdates(WSbitbayURL, this.allRates)
                      .subscribe((pair: TradingPair) =>  {
-                        this.allRates$.map((item: TradingPair) => {
+                        this.allRates.map((item: TradingPair) => {
                           if (item.pair === pair.pair) {
                             item.price = pair.price ;
                           }

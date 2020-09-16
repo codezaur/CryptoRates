@@ -26,16 +26,8 @@ export class RatesAPIService {
       stream.send(initMsg);
       stream.onmessage = (m: MessageEvent) => {
         const data = JSON.parse(m.data);
-
         if (data.topic) {
           this.ratesSubject$.next(m);
-        //   if ((data.topic as string).includes('btc')) {
-        //     this.ratesBTCSubject$.next(m);
-        // } else if ((data.topic as string).includes('eth')) {
-        //     this.ratesETHSubject$.next(m);
-        // } else if ((data.topic as string).includes('ltc')) {
-        //   this.ratesLTCSubject$.next(m);
-        // }
         }
 
     };
@@ -44,13 +36,6 @@ export class RatesAPIService {
 
 public getRatesREST(market: string): Promise<object|any> {
   return this.http.get(market).toPromise();
-  // try {
-  //   const initTraidingPairs: Promise<any> = this.http.get(market).toPromise() ;
-  //   // console.log('---btcInit: ', btcInit);
-  //   return initTraidingPairs;
-  // } catch (e) {
-  //   console.log('---err: ', e);
-  // }
 }
 
 }

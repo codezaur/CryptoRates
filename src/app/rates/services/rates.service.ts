@@ -2,7 +2,7 @@ import { Injectable, ApplicationRef } from '@angular/core';
 import { tap, map, filter, share } from 'rxjs/operators';
 import { Observable, from, Subject } from 'rxjs';
 
-import { RatesAPIService } from './ratesAPIservice';
+import { RatesAPIService } from './ratesAPI.service';
 import { TradingPair } from '../interfaces/tradingPair.interface';
 import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
          bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
@@ -22,9 +22,12 @@ export class RatesService {
 
   }
 
-  public getRatesUpdates(market: string, query: string): Observable<TradingPair> {
+  public getRatesUpdates(market: string, pairs: TradingPair[]): Observable<TradingPair> {
 
-    this.ratesAPIService.getRatesWS(market, query);
+    pairs.map((pair: TradingPair) => {
+      const query = this.assignInitialQuery(pair);
+      this.ratesAPIService.getRatesWS(market, query);
+    });
     return this.ratesAPIService.ratesSubject$
                                .pipe(
                                   filter((val: MessageEvent) => JSON.parse(val.data).action === 'push'),
@@ -34,7 +37,22 @@ export class RatesService {
                                 );
   }
 
+  private assignInitialQuery(pair: TradingPair): string {
+
+    const currency = pair.pair.substring(0, 3);
+    switch (currency) {
+      case 'BTC':
+        return bitbayBTCQuery;
+      case 'LTC':
+        return bitbayLTCQuery;
+      case 'ETH':
+        return bitbayETHQuery;
+    }
+
+  }
+
   private selectSourceSubject(query: string) {
+
     switch (query) {
       case bitbayBTCQuery:
         return this.ratesAPIService.ratesBTCSubject$;
@@ -58,11 +76,11 @@ export class RatesService {
   }
 
   private prepareTradingPair(msg: MessageEvent): TradingPair {
+
     const data = JSON.parse(msg.data);
     return {
       pair: data.message.changes[0].marketCode,
       price: data.message.changes[0].rate,
-      // entryType: data.message.changes[0].entryType,
     };
   }
 }
