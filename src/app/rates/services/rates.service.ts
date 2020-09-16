@@ -4,6 +4,7 @@ import { Observable, from, Subject } from 'rxjs';
 
 import { RatesAPIService } from './ratesAPI.service';
 import { TradingPair } from '../interfaces/tradingPair.interface';
+import { WSbitbayURL, WSbitfinexURL, RESTbitbayURL } from '../constants/markets';
 import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
          bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
 import { selectedPairs } from '../constants/pairs';
@@ -25,8 +26,10 @@ export class RatesService {
   public getRatesUpdates(market: string, pairs: TradingPair[]): Observable<TradingPair> {
 
     pairs.map((pair: TradingPair) => {
-      const query = this.assignInitialQuery(pair);
-      this.ratesAPIService.getRatesWS(market, query);
+      this.ratesAPIService.getRatesWS(this.assignMarketURL(market),
+                                      this.assignInitialQuery(pair));
+      // const query = this.assignInitialQuery(pair);
+      // this.ratesAPIService.getRatesWS(market, query);
     });
     return this.ratesAPIService.ratesSubject$
                                .pipe(
@@ -49,6 +52,15 @@ export class RatesService {
         return bitbayETHQuery;
     }
 
+  }
+
+  private assignMarketURL(market: string): string {
+    switch (market) {
+      case 'Bitbay':
+        return WSbitbayURL;
+      case 'Bitfinex':
+        return WSbitfinexURL;
+    }
   }
 
   private selectSourceSubject(query: string) {

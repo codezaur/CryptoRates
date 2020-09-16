@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable, of, from } from 'rxjs';
 
 import { RatesService } from './services/rates.service';
@@ -21,12 +21,20 @@ export class RatesComponent implements OnInit {
 
   selectedCurrencies: string[] = [];
 
-  constructor(private CD: ChangeDetectorRef, private ratesService: RatesService) {
+  markets: string[] = ['Bitbay', 'Bitfinex'];
+
+  selectedMarket = 'Bitbay';
+
+  constructor(private ratesService: RatesService) {
   }
 
   ngOnInit() {
     this.getInitalRates()
         .then(() => this.listenForUpdates());
+  }
+
+  public selectMarket(market: string): void {
+    this.selectedMarket = market;
   }
 
   private getInitalRates(): Promise<any> {

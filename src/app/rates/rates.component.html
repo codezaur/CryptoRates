@@ -3,3 +3,16 @@
 <div *ngFor="let item of allRates">
   pair: {{item.pair}}, price: {{item.price}}
 </div>
+
+<label for="market">Select market</label>
+<select name="market"
+        [ngModel]="selectedMarket"
+        (ngModelChange)="selectMarket($event)">
+
+  <option *ngFor="let market of markets"
+          [ngValue]="market" >
+    {{market}}
+  </option>
+</select>
+
+<div>selected: {{selectedMarket}}</div>
