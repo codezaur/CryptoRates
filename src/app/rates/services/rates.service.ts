@@ -15,6 +15,13 @@ export class RatesService {
 
   constructor(private ratesAPIService: RatesAPIService, private appRef: ApplicationRef) { }
 
+  // public getInitalRates(market: string): Promise<TradingPair[]> {
+
+  //   return this.ratesAPIService
+  //              .getRatesREST(market)
+  //              .then((rates: object|any) => this.extractInitalTraidingPairs(rates));
+
+  // }
   public getInitalRates(market: string): Promise<TradingPair[]> {
 
     return this.ratesAPIService
@@ -25,11 +32,10 @@ export class RatesService {
 
   public getRatesUpdates(market: string, pairs: TradingPair[]): Observable<TradingPair> {
 
+    const selectedMarket: string = this.assignMarketURL(market);
     pairs.map((pair: TradingPair) => {
-      this.ratesAPIService.getRatesWS(this.assignMarketURL(market),
+      this.ratesAPIService.getRatesWS(selectedMarket,
                                       this.assignInitialQuery(pair));
-      // const query = this.assignInitialQuery(pair);
-      // this.ratesAPIService.getRatesWS(market, query);
     });
     return this.ratesAPIService.ratesSubject$
                                .pipe(
@@ -79,6 +85,7 @@ export class RatesService {
     console.log('---ticker in extracting: ', ticker);
     const extractedPairs: TradingPair[] = [];
     Object.keys(ticker.items).forEach((item: string) => {
+      console.log('---ticker item: ', item);
       if (selectedPairs.includes(item)) {
         extractedPairs.push({pair: ticker.items[item].market.code,
                              price: ticker.items[item].rate});
