@@ -22,6 +22,7 @@ export class RatesComponent implements OnInit {
   selectedCurrencies: string[] = [];
 
   markets: string[] = ['Bitbay', 'Bitfinex'];
+  initialMarket: string = RESTbitbayURL;
 
   selectedMarket = 'Bitbay';
   // selectedMarket = 'Bitfinex';
@@ -51,7 +52,7 @@ export class RatesComponent implements OnInit {
 
   private getInitalRates(): Promise<any> {
 
-    return this.ratesService.getInitalRates(RESTbitbayURL)
+    return this.ratesService.getInitalRates(this.initialMarket)
                      .then((initialPairs: TradingPair[]) => {
                            this.allRates = initialPairs;
     });

@@ -1,19 +1,22 @@
-import { Injectable, ApplicationRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { tap, map, filter, share } from 'rxjs/operators';
 import { Observable, from, Subject } from 'rxjs';
 
-import { RatesAPIService } from './ratesAPI.service';
 import { TradingPair } from '../interfaces/tradingPair.interface';
 import { WSbitbayURL, WSbitfinexURL, RESTbitbayURL } from '../constants/markets';
 import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
          bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
 import { selectedPairs } from '../constants/pairs';
 
+import { RatesAPIService } from './ratesAPI.service';
+import { BitbayService } from './markets/bitbay.service';
+
+
 @Injectable({providedIn: 'root'})
 
 export class RatesService {
 
-  constructor(private ratesAPIService: RatesAPIService, private appRef: ApplicationRef) { }
+  constructor(private ratesAPIService: RatesAPIService, private bitbayService: BitbayService) { }
 
   // public getInitalRates(market: string): Promise<TradingPair[]> {
 
@@ -26,7 +29,7 @@ export class RatesService {
 
     return this.ratesAPIService
                .getRatesREST(market)
-               .then((rates: object|any) => this.extractInitalTraidingPairs(rates));
+               .then(<T>(rates: T) => this.extractInitalTraidingPairs(rates));
 
   }
 
@@ -81,18 +84,32 @@ export class RatesService {
     }
   }
 
-  private extractInitalTraidingPairs(ticker: object | any): TradingPair[] {
-    console.log('---ticker in extracting: ', ticker);
-    const extractedPairs: TradingPair[] = [];
-    Object.keys(ticker.items).forEach((item: string) => {
-      console.log('---ticker item: ', item);
-      if (selectedPairs.includes(item)) {
-        extractedPairs.push({pair: ticker.items[item].market.code,
-                             price: ticker.items[item].rate});
-      }
-    });
-    return extractedPairs;
+  private extractInitalTraidingPairs<T>(ticker: T): TradingPair[] {
+
+    return this.bitbayService.extractInitalTraidingPairs(ticker);
+    // console.log('---ticker in extracting: ', ticker);
+    // const extractedPairs: TradingPair[] = [];
+    // Object.keys(ticker.items).forEach((item: string) => {
+    //   console.log('---ticker item: ', item);
+    //   if (selectedPairs.includes(item)) {
+    //     extractedPairs.push({pair: ticker.items[item].market.code,
+    //                          price: ticker.items[item].rate});
+    //   }
+    // });
+    // return extractedPairs;
   }
+  // private extractInitalTraidingPairs(ticker: object | any): TradingPair[] {
+  //   console.log('---ticker in extracting: ', ticker);
+  //   const extractedPairs: TradingPair[] = [];
+  //   Object.keys(ticker.items).forEach((item: string) => {
+  //     console.log('---ticker item: ', item);
+  //     if (selectedPairs.includes(item)) {
+  //       extractedPairs.push({pair: ticker.items[item].market.code,
+  //                            price: ticker.items[item].rate});
+  //     }
+  //   });
+  //   return extractedPairs;
+  // }
 
   private prepareTradingPair(msg: MessageEvent): TradingPair {
 
