@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 
 import { selectedPairs } from '../../constants/pairs';
 import { TradingPair } from '../../interfaces/tradingPair.interface';
+import { ExternalTicker } from '../../interfaces/externalTicker.inteface';
 
 @Injectable({providedIn: 'root'})
 
 export class BitbayService {
+
   constructor() {}
 
-  extractInitalTraidingPairs<T>(ticker: Record<string, any>) {
+  extractInitalTraidingPairs(ticker: ExternalTicker): TradingPair[] {
+  // extractInitalTraidingPairs<T extends {items: []; }>(ticker: T): TradingPair[] {
     console.log('---ticker in extracting: ', ticker);
     const extractedPairs: TradingPair[] = [];
     Object.keys(ticker.items).forEach((item: string) => {
@@ -22,3 +25,5 @@ export class BitbayService {
   }
 
 }
+
+// interface BitbayTicker { items: []; }

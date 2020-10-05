@@ -3,20 +3,26 @@ import { tap, map, filter, share } from 'rxjs/operators';
 import { Observable, from, Subject } from 'rxjs';
 
 import { TradingPair } from '../interfaces/tradingPair.interface';
-import { WSbitbayURL, WSbitfinexURL, RESTbitbayURL } from '../constants/markets';
+import { ExternalTicker } from '../interfaces/externalTicker.inteface';
+
+import { WSbitbayURL, WSbitfinexURL, RESTbitbayURL, RESTbitfinexURL } from '../constants/markets';
 import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
          bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
 import { selectedPairs } from '../constants/pairs';
 
 import { RatesAPIService } from './ratesAPI.service';
 import { BitbayService } from './markets/bitbay.service';
+import { BitfinexService } from './markets/bitfinex.service';
 
 
 @Injectable({providedIn: 'root'})
 
 export class RatesService {
 
-  constructor(private ratesAPIService: RatesAPIService, private bitbayService: BitbayService) { }
+  constructor(private ratesAPIService: RatesAPIService,
+              private bitbayService: BitbayService,
+              private bitfinexService: BitfinexService) { }
+
 
   // public getInitalRates(market: string): Promise<TradingPair[]> {
 
@@ -27,9 +33,10 @@ export class RatesService {
   // }
   public getInitalRates(market: string): Promise<TradingPair[]> {
 
+
     return this.ratesAPIService
                .getRatesREST(market)
-               .then(<T>(rates: T) => this.extractInitalTraidingPairs(rates));
+               .then(<T>(rates: T) => this.extractInitalTraidingPairs(rates, market));
 
   }
 
@@ -84,32 +91,18 @@ export class RatesService {
     }
   }
 
-  private extractInitalTraidingPairs<T>(ticker: T): TradingPair[] {
+  // private extractInitalTraidingPairs(ticker: ExternalTicker, market: string): TradingPair[] {
+  private extractInitalTraidingPairs(ticker: any, market: string): TradingPair[] {
+    console.log('%c[---ticker extact :]', 'color:lime', market, ' ', ticker);
 
-    return this.bitbayService.extractInitalTraidingPairs(ticker);
-    // console.log('---ticker in extracting: ', ticker);
-    // const extractedPairs: TradingPair[] = [];
-    // Object.keys(ticker.items).forEach((item: string) => {
-    //   console.log('---ticker item: ', item);
-    //   if (selectedPairs.includes(item)) {
-    //     extractedPairs.push({pair: ticker.items[item].market.code,
-    //                          price: ticker.items[item].rate});
-    //   }
-    // });
-    // return extractedPairs;
+    switch (market) {
+      case RESTbitbayURL:
+        return this.bitbayService.extractInitalTraidingPairs(ticker);
+      case RESTbitfinexURL:
+        return this.bitfinexService.extractInitalTraidingPairs(ticker);
+    }
+
   }
-  // private extractInitalTraidingPairs(ticker: object | any): TradingPair[] {
-  //   console.log('---ticker in extracting: ', ticker);
-  //   const extractedPairs: TradingPair[] = [];
-  //   Object.keys(ticker.items).forEach((item: string) => {
-  //     console.log('---ticker item: ', item);
-  //     if (selectedPairs.includes(item)) {
-  //       extractedPairs.push({pair: ticker.items[item].market.code,
-  //                            price: ticker.items[item].rate});
-  //     }
-  //   });
-  //   return extractedPairs;
-  // }
 
   private prepareTradingPair(msg: MessageEvent): TradingPair {
 

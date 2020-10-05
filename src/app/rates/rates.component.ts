@@ -22,7 +22,8 @@ export class RatesComponent implements OnInit {
   selectedCurrencies: string[] = [];
 
   markets: string[] = ['Bitbay', 'Bitfinex'];
-  initialMarket: string = RESTbitbayURL;
+  // initialMarket: string = RESTbitbayURL;
+  initialMarket: string = RESTbitfinexURL;
 
   selectedMarket = 'Bitbay';
   // selectedMarket = 'Bitfinex';
