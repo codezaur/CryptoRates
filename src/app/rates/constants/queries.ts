@@ -18,15 +18,15 @@ export const bitbayLTCQuery: string = JSON.stringify({
 
 export const bitfinexBTCQuery: string = JSON.stringify({
                               event: 'subscribe',
-                              channel: 'trades',
+                              channel: 'ticker',
                               symbol: 'tBTCUSD' });
 
 export const bitfinexETHQuery: string = JSON.stringify({
                               event: 'subscribe',
-                              channel: 'trades',
+                              channel: 'ticker',
                               symbol: 'tETHUSD' });
 
 export const bitfinexLTCQuery: string = JSON.stringify({
                               event: 'subscribe',
-                              channel: 'trades',
+                              channel: 'ticker',
                               symbol: 'tLTCUSD' });

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { selectedPairs } from '../../constants/pairs';
+import { bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery } from '../../constants/queries';
 import { TradingPair } from '../../interfaces/tradingPair.interface';
 import { ExternalTicker } from '../../interfaces/externalTicker.inteface';
 
@@ -10,7 +11,7 @@ export class BitfinexService {
 
   constructor() {}
 
-  extractInitalTraidingPairs(ticker: any[]): TradingPair[] {
+  public extractInitalTraidingPairs(ticker: any[]): TradingPair[] {
     const extractedPairs: TradingPair[] = [];
     const preparedPairs: string[] = this.prepareSelectedPairs();
 
@@ -22,6 +23,17 @@ export class BitfinexService {
     });
 
     return extractedPairs;
+  }
+
+  public assignInitialQuery(currency: string): string {
+    switch (currency) {
+      case 'BTC':
+        return bitfinexBTCQuery;
+      case 'LTC':
+        return bitfinexLTCQuery;
+      case 'ETH':
+        return bitfinexETHQuery;
+    }
   }
 
   private prepareSelectedPairs(): string[] {

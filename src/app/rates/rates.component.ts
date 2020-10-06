@@ -25,18 +25,18 @@ export class RatesComponent implements OnInit {
   // initialMarket: string = RESTbitbayURL;
   initialMarket: string = RESTbitfinexURL;
 
-  selectedMarket = 'Bitbay';
-  // selectedMarket = 'Bitfinex';
+  // selectedMarket = 'Bitbay';
+  selectedMarket = 'Bitfinex';
 
   constructor(private ratesService: RatesService) {
   }
 
   ngOnInit() {
-    this.getInitalRates();
+    // this.getInitalRates();
         // .then(() => this.listenForUpdates());
 
-    // this.getInitalRates()
-    //     .then(() => this.listenForUpdates());
+    this.getInitalRates()
+        .then(() => this.listenForUpdates());
   }
 
   public selectMarket(market: string): void {

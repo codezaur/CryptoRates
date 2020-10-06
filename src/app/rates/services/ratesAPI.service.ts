@@ -21,14 +21,13 @@ export class RatesAPIService {
   constructor(private http: HttpClient) {}
 
   public getRatesWS(market: string, initMsg: string): void {
-    // console.log('%c[--- market :]', 'color:lime', market);
     const stream = new WebSocket(market);
     stream.onopen = (e: MessageEvent) => {
       stream.send(initMsg);
       stream.onmessage = (m: MessageEvent) => {
-        console.log('%c[--- m :]', 'color:lime', m);
-        // console.log('%c[--- m :]', 'color:lime', m.origin);
+        // console.log('%c[--- m :]', 'color:lime', m);
         const data = JSON.parse(m.data);
+        console.log('%c[--- m :]', 'color:lime', data);
         if (data.topic) {
           this.ratesSubject$.next(m);
         }

@@ -45,7 +45,7 @@ export class RatesService {
     const selectedMarket: string = this.assignMarketURL(market);
     pairs.map((pair: TradingPair) => {
       this.ratesAPIService.getRatesWS(selectedMarket,
-                                      this.assignInitialQuery(pair));
+                                      this.assignInitialQuery(pair, market));
     });
     return this.ratesAPIService.ratesSubject$
                                .pipe(
@@ -56,16 +56,15 @@ export class RatesService {
                                 );
   }
 
-  private assignInitialQuery(pair: TradingPair): string {
+  private assignInitialQuery(pair: TradingPair, market: string): string {
 
-    const currency = pair.pair.substring(0, 3);
-    switch (currency) {
-      case 'BTC':
-        return bitbayBTCQuery;
-      case 'LTC':
-        return bitbayLTCQuery;
-      case 'ETH':
-        return bitbayETHQuery;
+    const currency: string = pair.pair.substring(0, 3);
+
+    switch (market) {
+      case 'Bitbay':
+        return this.bitbayService.assignInitialQuery(currency);
+      case 'Bitfinex':
+        return this.bitfinexService.assignInitialQuery(currency);
     }
 
   }
@@ -79,21 +78,20 @@ export class RatesService {
     }
   }
 
-  private selectSourceSubject(query: string) {
+  // private selectSourceSubject(query: string) {
 
-    switch (query) {
-      case bitbayBTCQuery:
-        return this.ratesAPIService.ratesBTCSubject$;
-      case bitbayETHQuery:
-        return this.ratesAPIService.ratesETHSubject$;
-      case bitbayLTCQuery:
-        return this.ratesAPIService.ratesLTCSubject$;
-    }
-  }
+  //   switch (query) {
+  //     case bitbayBTCQuery:
+  //       return this.ratesAPIService.ratesBTCSubject$;
+  //     case bitbayETHQuery:
+  //       return this.ratesAPIService.ratesETHSubject$;
+  //     case bitbayLTCQuery:
+  //       return this.ratesAPIService.ratesLTCSubject$;
+  //   }
+  // }
 
   // private extractInitalTraidingPairs(ticker: ExternalTicker, market: string): TradingPair[] {
   private extractInitalTraidingPairs(ticker: any, market: string): TradingPair[] {
-    console.log('%c[---ticker extact :]', 'color:lime', market, ' ', ticker);
 
     switch (market) {
       case RESTbitbayURL:

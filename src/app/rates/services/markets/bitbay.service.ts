@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { selectedPairs } from '../../constants/pairs';
+import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery } from '../../constants/queries';
 import { TradingPair } from '../../interfaces/tradingPair.interface';
 import { ExternalTicker } from '../../interfaces/externalTicker.inteface';
 
@@ -10,7 +11,7 @@ export class BitbayService {
 
   constructor() {}
 
-  extractInitalTraidingPairs(ticker: ExternalTicker): TradingPair[] {
+  public extractInitalTraidingPairs(ticker: ExternalTicker): TradingPair[] {
   // extractInitalTraidingPairs<T extends {items: []; }>(ticker: T): TradingPair[] {
     console.log('---ticker in extracting: ', ticker);
     const extractedPairs: TradingPair[] = [];
@@ -24,6 +25,15 @@ export class BitbayService {
     return extractedPairs;
   }
 
-}
+  public assignInitialQuery(currency: string): string {
+    switch (currency) {
+      case 'BTC':
+        return bitbayBTCQuery;
+      case 'LTC':
+        return bitbayLTCQuery;
+      case 'ETH':
+        return bitbayETHQuery;
+    }
+  }
 
-// interface BitbayTicker { items: []; }
+}
