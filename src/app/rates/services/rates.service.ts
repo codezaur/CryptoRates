@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { tap, map, filter, share } from 'rxjs/operators';
-import { Observable, from, Subject } from 'rxjs';
+import { tap, map, filter, share, switchMap } from 'rxjs/operators';
+import { Observable, from, of, Subject, pipe } from 'rxjs';
 
 import { TradingPair } from '../interfaces/tradingPair.interface';
-import { ExternalTicker } from '../interfaces/externalTicker.inteface';
+import { APIResponse } from '../interfaces/apiResponse.interface';
+// import { ExternalTicker } from '../interfaces/externalTicker.inteface';
 
 import { WSbitbayURL, WSbitfinexURL, RESTbitbayURL, RESTbitfinexURL } from '../constants/markets';
-import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
-         bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
-import { selectedPairs } from '../constants/pairs';
+// import { bitbayBTCQuery, bitbayETHQuery, bitbayLTCQuery,
+//          bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery} from '../constants/queries';
+// import { selectedPairs } from '../constants/pairs';
 
 import { RatesAPIService } from './ratesAPI.service';
 import { BitbayService } from './markets/bitbay.service';
@@ -49,11 +50,23 @@ export class RatesService {
     });
     return this.ratesAPIService.ratesSubject$
                                .pipe(
-                                  filter((val: MessageEvent) => JSON.parse(val.data).action === 'push'),
-                                  map((msg: MessageEvent) => this.prepareTradingPair(msg)),
-                                  tap((v) => console.log('---mapped: ', v)),
-                                  share()
+                                 tap((v) => console.log('--pipe: ', v)),
+                                 switchMap((val: APIResponse) => this.handleWSResponse(of(val)))
                                 );
+  }
+
+  private handleWSResponse(response: Observable<APIResponse>): Observable<TradingPair> {
+    return response.pipe(
+     switchMap((val: APIResponse ) => {
+        switch (val.market ) {
+          case WSbitbayURL:
+            return val.WSMsg.pipe(
+              tap((v) => console.log('%c[--- handle pipe :]', 'color:lime', v)),
+              switchMap((v: MessageEvent) => this.bitbayService.handleBitbayWSResponse(of(v)))
+              );
+        }
+      })
+    );
   }
 
   private assignInitialQuery(pair: TradingPair, market: string): string {
@@ -102,12 +115,12 @@ export class RatesService {
 
   }
 
-  private prepareTradingPair(msg: MessageEvent): TradingPair {
+  // private prepareTradingPair(msg: MessageEvent): TradingPair {
 
-    const data = JSON.parse(msg.data);
-    return {
-      pair: data.message.changes[0].marketCode,
-      price: data.message.changes[0].rate,
-    };
-  }
+  //   const data = JSON.parse(msg.data);
+  //   return {
+  //     pair: data.message.changes[0].marketCode,
+  //     price: data.message.changes[0].rate,
+  //   };
+  // }
 }
