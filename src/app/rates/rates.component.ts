@@ -25,8 +25,8 @@ export class RatesComponent implements OnInit {
   // initialMarket: string = RESTbitbayURL;
   initialMarket: string = RESTbitfinexURL;
 
-  selectedMarket = 'Bitbay';
-  // selectedMarket = 'Bitfinex';
+  // selectedMarket = 'Bitbay';
+  selectedMarket = 'Bitfinex';
 
   constructor(private ratesService: RatesService) {
   }

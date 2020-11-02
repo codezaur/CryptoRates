@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Observable, of, pipe, EMPTY } from 'rxjs';
+import { tap, map, filter, share, switchMap, scan, concatAll, mergeScan } from 'rxjs/operators';
 
 import { selectedPairs } from '../../constants/pairs';
 import { bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery } from '../../constants/queries';
@@ -8,6 +10,10 @@ import { ExternalTicker } from '../../interfaces/externalTicker.inteface';
 @Injectable({providedIn: 'root'})
 
 export class BitfinexService {
+
+  r: TradingPair = {pair: '', price: ''};
+
+  pairsIDs = {BTCUSD: '', ETHUSD: '', LTCUSD: ''};
 
   constructor() {}
 
@@ -36,8 +42,34 @@ export class BitfinexService {
     }
   }
 
+  public handleBitfinexWSResponse(response: Observable<MessageEvent>): Observable<TradingPair> {
+    return response.pipe(
+                    filter((val: MessageEvent) => JSON.parse(val.data).event !== 'info'),
+                    switchMap((val: MessageEvent) => {
+                      if (JSON.parse(val.data).event === 'subscribed') {
+                        const pairSymbol: string = (JSON.parse(val.data)).pair;
+                        this.pairsIDs[pairSymbol] = (JSON.parse(val.data)).chanId;
+                        return EMPTY;
+                      } else {
+                        return of(val);
+                      }
+                    }),
+                    map((v) => this.prepareTradingPair(v)),
+    );
+  }
+
+  private prepareTradingPair(msg: MessageEvent): TradingPair {
+
+    const id = (JSON.parse(msg.data))[0];
+    const currency = Object.keys(this.pairsIDs)[Object.values(this.pairsIDs).indexOf(id)];
+    const price = (JSON.parse(msg.data))[1][0];
+
+    return {pair: currency, price};
+  }
+
   private prepareSelectedPairs(): string[] {
     return selectedPairs.map((pair: string) => pair.replace('-', ''));
   }
 
 }
+

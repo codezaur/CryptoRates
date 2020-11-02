@@ -50,8 +50,9 @@ export class RatesService {
     });
     return this.ratesAPIService.ratesSubject$
                                .pipe(
-                                 tap((v) => console.log('--pipe: ', v)),
-                                 switchMap((val: APIResponse) => this.handleWSResponse(of(val)))
+                                //  tap((v) => console.log('--pipe: ', v)),
+                                 switchMap((val: APIResponse) => this.handleWSResponse(of(val))),
+                                  tap((v) => console.log('--pipe RATES $$: ', v)),
                                 );
   }
 
@@ -61,9 +62,12 @@ export class RatesService {
         switch (val.market ) {
           case WSbitbayURL:
             return val.WSMsg.pipe(
-              tap((v) => console.log('%c[--- handle pipe :]', 'color:lime', v)),
-              switchMap((v: MessageEvent) => this.bitbayService.handleBitbayWSResponse(of(v)))
-              );
+              // tap((v) => console.log('%c[--- handle pipe :]', 'color:lime', v)),
+              switchMap((v: MessageEvent) => this.bitbayService.handleBitbayWSResponse(of(v))));
+          case WSbitfinexURL:
+            return val.WSMsg.pipe(
+              // tap((v) => console.log('%c[--- handle pipe :]', 'color:lime', v)),
+              switchMap((v: MessageEvent) => this.bitfinexService.handleBitfinexWSResponse(of(v))));
         }
       })
     );
