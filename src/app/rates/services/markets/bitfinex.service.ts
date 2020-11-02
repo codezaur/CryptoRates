@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, pipe, EMPTY } from 'rxjs';
-import { tap, map, filter, share, switchMap, scan, concatAll, mergeScan } from 'rxjs/operators';
+import { Observable, of, EMPTY } from 'rxjs';
+import { tap, map, filter, switchMap } from 'rxjs/operators';
 
 import { selectedPairs } from '../../constants/pairs';
 import { bitfinexBTCQuery, bitfinexETHQuery, bitfinexLTCQuery } from '../../constants/queries';
 import { TradingPair } from '../../interfaces/tradingPair.interface';
-import { ExternalTicker } from '../../interfaces/externalTicker.inteface';
 
 @Injectable({providedIn: 'root'})
 
 export class BitfinexService {
-
-  r: TradingPair = {pair: '', price: ''};
 
   pairsIDs = {BTCUSD: '', ETHUSD: '', LTCUSD: ''};
 
